@@ -9,7 +9,28 @@ export default function Pricing() {
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, margin: '-100px' });
 
-  const plans = [
+  interface Feature {
+    name: string;
+    included: boolean;
+    highlight?: boolean;
+  }
+
+  interface Plan {
+    name: string;
+    subtitle: string;
+    icon: any;
+    price: { monthly: number | null; annual: number | null };
+    agents: string;
+    color: string;
+    bgColor: string;
+    borderColor: string;
+    popular: boolean;
+    features: Feature[];
+    cta: string;
+    ctaStyle: string;
+  }
+
+  const plans: Plan[] = [
     {
       name: 'Starter',
       subtitle: 'Per piccoli team',
@@ -231,7 +252,7 @@ export default function Pricing() {
                     <div className="text-sm text-slate-500 mt-1">per agente</div>
                     {isAnnual && plan.price.monthly !== plan.price.annual && (
                       <div className="text-xs text-green-600 mt-1">
-                        Risparmi €{(plan.price.monthly - plan.price.annual) * 12}/anno per agente
+                        Risparmi €{((plan.price.monthly || 0) - (plan.price.annual || 0)) * 12}/anno per agente
                       </div>
                     )}
                   </>
