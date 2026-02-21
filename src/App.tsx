@@ -9,6 +9,7 @@ import Pricing from './components/Pricing'
 import SocialProof from './components/SocialProof'
 import FinalCTA from './components/FinalCTA'
 import Footer from './components/Footer'
+import ChatWidget from './components/ChatWidget'
 
 function App() {
   return (
@@ -26,6 +27,10 @@ function App() {
         <FinalCTA />
       </main>
       <Footer />
+      <ChatWidget
+        websiteToken="" // TODO: inserisci il Website Token dal pannello Sintonia
+        baseUrl="https://app.sintonia.cloud"
+      />
     </div>
   )
 }
