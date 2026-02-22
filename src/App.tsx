@@ -28,7 +28,7 @@ function App() {
       </main>
       <Footer />
       <ChatWidget
-        websiteToken="" // TODO: inserisci il Website Token dal pannello Sintonia
+        websiteToken="qGPUwRXk8rjsSGCVUuKR69ot"
         baseUrl="https://app.sintonia.cloud"
       />
     </div>

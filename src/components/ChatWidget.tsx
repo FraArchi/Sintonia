@@ -31,7 +31,7 @@ interface ChatWidgetProps {
  * per configurare questo componente.
  */
 export default function ChatWidget({
-  websiteToken = '', // <-- Inserisci il token dal pannello Sintonia
+  websiteToken = 'qGPUwRXk8rjsSGCVUuKR69ot',
   baseUrl = 'https://app.sintonia.cloud',
   position = 'right',
   locale = 'it',
