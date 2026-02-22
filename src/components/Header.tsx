@@ -16,8 +16,8 @@ export default function Header() {
   const navLinks = [
     { name: 'Prodotto', href: '#features' },
     { name: 'Pricing', href: '#pricing' },
-    { name: 'Risorse', href: '#resources' },
-    { name: 'Azienda', href: '#company' },
+    { name: 'Risorse', href: '#', onClick: (e: React.MouseEvent) => { e.preventDefault(); window.$chatwoot?.toggleOpened(); } },
+    { name: 'Azienda', href: '#', onClick: (e: React.MouseEvent) => { e.preventDefault(); window.$chatwoot?.toggleOpened(); } },
   ];
 
   return (
@@ -46,6 +46,7 @@ export default function Header() {
               <a
                 key={link.name}
                 href={link.href}
+                onClick={link.onClick}
                 className="text-slate-600 hover:text-blue-600 font-medium transition-colors relative group"
               >
                 {link.name}
@@ -57,13 +58,13 @@ export default function Header() {
           {/* Desktop CTA */}
           <div className="hidden lg:flex items-center gap-4">
             <a
-              href="#login"
+              href="https://app.sintonia.cloud/app/login"
               className="text-slate-600 hover:text-blue-600 font-medium transition-colors"
             >
               Accedi
             </a>
             <a
-              href="#signup"
+              href="https://app.sintonia.cloud/app/auth/signup"
               className="px-5 py-2.5 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-semibold shadow-lg hover:shadow-blue-500/30 hover:scale-105 transition-all"
             >
               Inizia Gratis
@@ -93,20 +94,23 @@ export default function Header() {
               key={link.name}
               href={link.href}
               className="block text-slate-600 hover:text-blue-600 font-medium py-2 transition-colors"
-              onClick={() => setIsMobileMenuOpen(false)}
+              onClick={(e) => {
+                setIsMobileMenuOpen(false);
+                if (link.onClick) link.onClick(e);
+              }}
             >
               {link.name}
             </a>
           ))}
           <div className="pt-4 border-t border-slate-200 space-y-3">
             <a
-              href="#login"
+              href="https://app.sintonia.cloud/app/login"
               className="block text-center text-slate-600 hover:text-blue-600 font-medium py-2 transition-colors"
             >
               Accedi
             </a>
             <a
-              href="#signup"
+              href="https://app.sintonia.cloud/app/auth/signup"
               className="block text-center px-5 py-3 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-semibold shadow-lg"
             >
               Inizia Gratis

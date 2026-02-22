@@ -2,6 +2,9 @@ import { useEffect } from 'react';
 
 declare global {
   interface Window {
+    $chatwoot?: {
+      toggleOpened: () => void;
+    };
     chatwootSettings?: {
       hideMessageBubble?: boolean;
       position?: 'left' | 'right';

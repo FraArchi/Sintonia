@@ -18,7 +18,7 @@ export default function Pricing() {
   interface Plan {
     name: string;
     subtitle: string;
-    icon: any;
+    icon: React.ElementType;
     price: { monthly: number | null; annual: number | null };
     agents: string;
     color: string;
@@ -27,6 +27,7 @@ export default function Pricing() {
     popular: boolean;
     features: Feature[];
     cta: string;
+    ctaAction: 'signup' | 'chat';
     ctaStyle: string;
   }
 
@@ -52,6 +53,7 @@ export default function Pricing() {
         { name: 'Account manager', included: false },
       ],
       cta: 'Inizia Gratis',
+      ctaAction: 'signup',
       ctaStyle: 'bg-slate-800 hover:bg-slate-900 text-white',
     },
     {
@@ -75,6 +77,7 @@ export default function Pricing() {
         { name: 'Account manager', included: false },
       ],
       cta: 'Inizia Gratis',
+      ctaAction: 'signup',
       ctaStyle: 'bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white shadow-lg shadow-blue-500/25',
     },
     {
@@ -98,6 +101,7 @@ export default function Pricing() {
         { name: 'Onboarding guidato', included: true },
       ],
       cta: 'Contattaci',
+      ctaAction: 'chat',
       ctaStyle: 'bg-purple-600 hover:bg-purple-700 text-white',
     },
     {
@@ -121,6 +125,7 @@ export default function Pricing() {
         { name: 'Supporto 24/7', included: true },
       ],
       cta: 'Parla con noi',
+      ctaAction: 'chat',
       ctaStyle: 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white',
     },
   ];
@@ -279,7 +284,17 @@ export default function Pricing() {
               </ul>
 
               {/* CTA */}
-              <button className={`w-full py-3 rounded-xl font-semibold transition-all ${plan.ctaStyle}`}>
+              <button 
+                className={`w-full py-3 rounded-xl font-semibold transition-all ${plan.ctaStyle}`}
+                onClick={(e) => {
+                  if (plan.ctaAction === 'signup') {
+                    window.location.href = 'https://app.sintonia.cloud/app/auth/signup';
+                  } else {
+                    e.preventDefault();
+                    window.$chatwoot?.toggleOpened();
+                  }
+                }}
+              >
                 {plan.cta}
               </button>
             </motion.div>

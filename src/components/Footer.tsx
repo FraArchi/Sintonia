@@ -1,42 +1,42 @@
 import { Zap, Twitter, Linkedin, Github, Youtube, Globe, Mail, MapPin, Phone } from 'lucide-react';
 
 export default function Footer() {
-  const footerLinks = {
+  const footerLinks: Record<string, {name: string, href: string, onClick?: (e: React.MouseEvent) => void}[]> = {
     Prodotto: [
       { name: 'Funzionalità', href: '#features' },
-      { name: 'Pilota AI', href: '#pilota' },
-      { name: 'Integrazioni', href: '#integrations' },
+      { name: 'Pilota AI', href: '#features' }, // Mapped correctly
+      { name: 'Integrazioni', href: '#features' },
       { name: 'Pricing', href: '#pricing' },
-      { name: 'Changelog', href: '#changelog' },
+      { name: 'Changelog', href: '#', onClick: (e) => { e.preventDefault(); window.$chatwoot?.toggleOpened(); } },
     ],
     Risorse: [
-      { name: 'Documentazione', href: '#docs' },
-      { name: 'API Reference', href: '#api' },
-      { name: 'Guide', href: '#guides' },
-      { name: 'Blog', href: '#blog' },
-      { name: 'Webinar', href: '#webinar' },
+      { name: 'Documentazione', href: '#', onClick: (e) => { e.preventDefault(); window.$chatwoot?.toggleOpened(); } },
+      { name: 'API Reference', href: '#', onClick: (e) => { e.preventDefault(); window.$chatwoot?.toggleOpened(); } },
+      { name: 'Guide', href: '#', onClick: (e) => { e.preventDefault(); window.$chatwoot?.toggleOpened(); } },
+      { name: 'Blog', href: '#', onClick: (e) => { e.preventDefault(); window.$chatwoot?.toggleOpened(); } },
+      { name: 'Webinar', href: '#', onClick: (e) => { e.preventDefault(); window.$chatwoot?.toggleOpened(); } },
     ],
     Azienda: [
-      { name: 'Chi siamo', href: '#about' },
-      { name: 'Carriere', href: '#careers' },
-      { name: 'Partner', href: '#partners' },
-      { name: 'Contatti', href: '#contact' },
-      { name: 'Stampa', href: '#press' },
+      { name: 'Chi siamo', href: '#', onClick: (e) => { e.preventDefault(); window.$chatwoot?.toggleOpened(); } },
+      { name: 'Carriere', href: '#', onClick: (e) => { e.preventDefault(); window.$chatwoot?.toggleOpened(); } },
+      { name: 'Partner', href: '#', onClick: (e) => { e.preventDefault(); window.$chatwoot?.toggleOpened(); } },
+      { name: 'Contatti', href: '#', onClick: (e) => { e.preventDefault(); window.$chatwoot?.toggleOpened(); } },
+      { name: 'Stampa', href: '#', onClick: (e) => { e.preventDefault(); window.$chatwoot?.toggleOpened(); } },
     ],
     Legale: [
-      { name: 'Privacy Policy', href: '#privacy' },
-      { name: 'Terms of Service', href: '#terms' },
-      { name: 'Cookie Policy', href: '#cookies' },
-      { name: 'GDPR', href: '#gdpr' },
-      { name: 'Sicurezza', href: '#security' },
+      { name: 'Privacy Policy', href: '#', onClick: (e) => { e.preventDefault(); window.$chatwoot?.toggleOpened(); } },
+      { name: 'Terms of Service', href: '#', onClick: (e) => { e.preventDefault(); window.$chatwoot?.toggleOpened(); } },
+      { name: 'Cookie Policy', href: '#', onClick: (e) => { e.preventDefault(); window.$chatwoot?.toggleOpened(); } },
+      { name: 'GDPR', href: '#', onClick: (e) => { e.preventDefault(); window.$chatwoot?.toggleOpened(); } },
+      { name: 'Sicurezza', href: '#', onClick: (e) => { e.preventDefault(); window.$chatwoot?.toggleOpened(); } },
     ],
   };
 
   const socialLinks = [
-    { icon: Twitter, href: '#twitter', label: 'Twitter' },
-    { icon: Linkedin, href: '#linkedin', label: 'LinkedIn' },
-    { icon: Github, href: '#github', label: 'GitHub' },
-    { icon: Youtube, href: '#youtube', label: 'YouTube' },
+    { icon: Twitter, href: 'https://twitter.com/sintonia', label: 'Twitter' },
+    { icon: Linkedin, href: 'https://linkedin.com/company/sintonia', label: 'LinkedIn' },
+    { icon: Github, href: 'https://github.com/sintonia', label: 'GitHub' },
+    { icon: Youtube, href: 'https://youtube.com/sintonia', label: 'YouTube' },
   ];
 
   return (
@@ -80,6 +80,8 @@ export default function Footer() {
                 <a
                   key={i}
                   href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   aria-label={social.label}
                   className="w-10 h-10 rounded-lg bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-slate-700 hover:text-white transition-colors"
                 >
@@ -98,6 +100,7 @@ export default function Footer() {
                   <li key={i}>
                     <a
                       href={link.href}
+                      onClick={link.onClick}
                       className="text-slate-400 hover:text-white transition-colors text-sm"
                     >
                       {link.name}
@@ -124,12 +127,12 @@ export default function Footer() {
                 <span>Italiano</span>
               </button>
               {/* Status */}
-              <a href="#status" className="flex items-center gap-2 text-sm">
+              <div className="flex items-center gap-2 text-sm">
                 <span className="w-2 h-2 rounded-full bg-green-500" />
-                <span className="text-slate-400 hover:text-white transition-colors">
+                <span className="text-slate-400 transition-colors">
                   Tutti i sistemi operativi
                 </span>
-              </a>
+              </div>
             </div>
           </div>
         </div>

@@ -53,7 +53,7 @@ export default function Hero() {
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <motion.a
-                href="#signup"
+                href="https://app.sintonia.cloud/app/auth/signup"
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.98 }}
                 className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-bold text-lg shadow-xl shadow-blue-500/25 hover:shadow-blue-500/40 transition-shadow"
@@ -62,7 +62,8 @@ export default function Hero() {
                 <ArrowRight className="w-5 h-5" />
               </motion.a>
               <motion.a
-                href="#demo"
+                href="#"
+                onClick={(e) => { e.preventDefault(); window.$chatwoot?.toggleOpened(); }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.98 }}
                 className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full border-2 border-slate-200 bg-white/80 backdrop-blur text-slate-700 font-semibold text-lg hover:border-blue-300 hover:bg-blue-50/50 transition-all"
