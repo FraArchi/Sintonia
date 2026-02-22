@@ -12,8 +12,21 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = typeof window !== 'undefined' ? getAnalytics(app) : null;
+// Initialize Firebase safely
+let app;
+let analytics = null;
+
+try {
+  if (firebaseConfig.apiKey) {
+    app = initializeApp(firebaseConfig);
+    if (typeof window !== 'undefined') {
+      analytics = getAnalytics(app);
+    }
+  } else {
+    console.warn("Firebase configuration is missing or invalid. Check your environment variables.");
+  }
+} catch (error) {
+  console.error("Firebase initialization failed:", error);
+}
 
 export { app, analytics };
