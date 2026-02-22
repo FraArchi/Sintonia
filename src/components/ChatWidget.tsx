@@ -21,6 +21,7 @@ interface ChatWidgetProps {
   position?: 'left' | 'right';
   locale?: string;
   launcherTitle?: string;
+  type?: 'standard' | 'expanded_bubble';
 }
 
 /**
@@ -36,6 +37,7 @@ export default function ChatWidget({
   position = 'right',
   locale = 'it',
   launcherTitle = 'Chatta con Pilota',
+  type = 'expanded_bubble'
 }: ChatWidgetProps) {
   useEffect(() => {
     // Non caricare se manca il token
@@ -46,7 +48,7 @@ export default function ChatWidget({
       hideMessageBubble: false,
       position,
       locale,
-      type: 'standard',
+      type,
       launcherTitle,
     };
 
