@@ -1,38 +1,26 @@
-import Header from './components/Header.tsx'
-import Hero from './components/Hero.tsx'
-import PilotaAI from './components/PilotaAI.tsx'
-import OmnichannelHub from './components/OmnichannelHub.tsx'
-import Encyclopedia from './components/Encyclopedia.tsx'
-import Features from './components/Features.tsx'
-import Integrations from './components/Integrations.tsx'
-import Pricing from './components/Pricing.tsx'
-import SocialProof from './components/SocialProof.tsx'
-import FinalCTA from './components/FinalCTA.tsx'
-import Footer from './components/Footer.tsx'
-import ChatWidget from './components/ChatWidget.tsx'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import Landing from './pages/Landing.tsx';
+import Login from './pages/Login.tsx';
+import Signup from './pages/Signup.tsx';
+import DashboardRedirect from './pages/DashboardRedirect.tsx';
+import ChatWidget from './components/ChatWidget.tsx';
+import { AuthProvider } from './lib/AuthContext.tsx';
 
 function App() {
   return (
-    <div className="min-h-screen bg-white">
-      <Header />
-      <main>
-        <Hero />
-        <PilotaAI />
-        <OmnichannelHub />
-        <Encyclopedia />
-        <Features />
-        <Integrations />
-        <Pricing />
-        <SocialProof />
-        <FinalCTA />
-      </main>
-      <Footer />
-      <ChatWidget
-        websiteToken="qGPUwRXk8rjsSGCVUuKR69ot"
-        baseUrl="https://app.sintonia.cloud"
-      />
-    </div>
+    <AuthProvider>
+      <BrowserRouter>
+        <ChatWidget />
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/dashboard" element={<DashboardRedirect />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   )
 }
 
-export default App
+export default App;

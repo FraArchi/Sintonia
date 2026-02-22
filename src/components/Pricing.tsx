@@ -2,12 +2,14 @@ import { useState, useRef } from 'react';
 import { Check, X, Sparkles, HelpCircle, ChevronDown, Bot, Zap, Users, Building2, Crown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useInView } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 export default function Pricing() {
   const [isAnnual, setIsAnnual] = useState(true);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const sectionRef = useRef(null);
   const isInView = useInView(sectionRef, { once: true, margin: '-100px' });
+  const navigate = useNavigate();
 
   interface Feature {
     name: string;
@@ -18,7 +20,7 @@ export default function Pricing() {
   interface Plan {
     name: string;
     subtitle: string;
-    icon: React.ElementType;
+    icon: any;
     price: { monthly: number | null; annual: number | null };
     agents: string;
     color: string;
@@ -27,7 +29,6 @@ export default function Pricing() {
     popular: boolean;
     features: Feature[];
     cta: string;
-    ctaAction: 'signup' | 'chat';
     ctaStyle: string;
   }
 
@@ -53,7 +54,6 @@ export default function Pricing() {
         { name: 'Account manager', included: false },
       ],
       cta: 'Inizia Gratis',
-      ctaAction: 'signup',
       ctaStyle: 'bg-slate-800 hover:bg-slate-900 text-white',
     },
     {
@@ -77,7 +77,6 @@ export default function Pricing() {
         { name: 'Account manager', included: false },
       ],
       cta: 'Inizia Gratis',
-      ctaAction: 'signup',
       ctaStyle: 'bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white shadow-lg shadow-blue-500/25',
     },
     {
@@ -101,7 +100,6 @@ export default function Pricing() {
         { name: 'Onboarding guidato', included: true },
       ],
       cta: 'Contattaci',
-      ctaAction: 'chat',
       ctaStyle: 'bg-purple-600 hover:bg-purple-700 text-white',
     },
     {
@@ -125,7 +123,6 @@ export default function Pricing() {
         { name: 'Supporto 24/7', included: true },
       ],
       cta: 'Parla con noi',
-      ctaAction: 'chat',
       ctaStyle: 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white',
     },
   ];
@@ -285,15 +282,8 @@ export default function Pricing() {
 
               {/* CTA */}
               <button 
+                onClick={() => navigate('/signup')}
                 className={`w-full py-3 rounded-xl font-semibold transition-all ${plan.ctaStyle}`}
-                onClick={(e) => {
-                  if (plan.ctaAction === 'signup') {
-                    window.location.href = 'https://app.sintonia.cloud/app/auth/signup';
-                  } else {
-                    e.preventDefault();
-                    window.$chatwoot?.toggleOpened();
-                  }
-                }}
               >
                 {plan.cta}
               </button>

@@ -1,5 +1,6 @@
 import { ArrowRight, Sparkles, Zap, CheckCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { useInView } from 'framer-motion';
 import { useRef } from 'react';
 
@@ -61,19 +62,18 @@ export default function FinalCTA() {
 
           {/* CTAs */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-10">
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
+              <Link
+                to="/signup"
+                className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-white text-blue-600 font-bold text-lg shadow-xl hover:shadow-2xl transition-shadow"
+              >
+                <Zap className="w-5 h-5" />
+                Inizia la Prova Gratuita
+                <ArrowRight className="w-5 h-5" />
+              </Link>
+            </motion.div>
             <motion.a
-              href="https://app.sintonia.cloud/app/auth/signup"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.98 }}
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full bg-white text-blue-600 font-bold text-lg shadow-xl hover:shadow-2xl transition-shadow"
-            >
-              <Zap className="w-5 h-5" />
-              Inizia la Prova Gratuita
-              <ArrowRight className="w-5 h-5" />
-            </motion.a>
-            <motion.a
-              href="#"
-              onClick={(e) => { e.preventDefault(); window.$chatwoot?.toggleOpened(); }}
+              href="#demo"
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.98 }}
               className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-full border-2 border-white/30 text-white font-semibold text-lg hover:bg-white/10 backdrop-blur-sm transition-all"

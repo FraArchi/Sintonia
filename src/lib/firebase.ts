@@ -1,5 +1,5 @@
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+import { initializeApp, type FirebaseApp } from "firebase/app";
+import type { Analytics } from "firebase/analytics";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -13,14 +13,18 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase safely
-let app;
-let analytics = null;
+let app: FirebaseApp | undefined;
+let analytics: Analytics | null = null;
 
 try {
   if (firebaseConfig.apiKey) {
     app = initializeApp(firebaseConfig);
     if (typeof window !== 'undefined') {
-      analytics = getAnalytics(app);
+      import("firebase/analytics").then(({ getAnalytics }) => {
+        analytics = getAnalytics(app as FirebaseApp);
+      }).catch(() => {
+        console.warn("Firebase Analytics could not be loaded. It is likely blocked by an adblocker.");
+      });
     }
   } else {
     console.warn("Firebase configuration is missing or invalid. Check your environment variables.");
