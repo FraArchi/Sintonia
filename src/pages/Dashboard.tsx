@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { useAuth } from '../lib/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import { 
   BarChart3, 
   MessageSquare, 
@@ -8,7 +9,8 @@ import {
   LogOut, 
   Zap,
   Users,
-  Activity
+  Activity,
+  User as UserIcon
 } from 'lucide-react';
 
 declare global {
@@ -39,11 +41,54 @@ export default function Dashboard() {
     }
   };
 
+  const [serverStats, setServerStats] = useState({
+    activeConversations: '-',
+    supportedUsers: '-',
+    responseTime: '-',
+    satisfaction: '-'
+  });
+  
+  const [conversations, setConversations] = useState<Array<{
+    id: number;
+    userName: string;
+    lastMessage: string;
+    status: string;
+    createdAt: number;
+  }>>([]);
+  const [loadingStats, setLoadingStats] = useState(true);
+
+  useEffect(() => {
+    async function fetchDashboardData() {
+      try {
+        const [statsRes, convsRes] = await Promise.all([
+          fetch('http://localhost:3000/api/stats'),
+          fetch('http://localhost:3000/api/conversations')
+        ]);
+        
+        if (statsRes.ok) {
+          const statsData = await statsRes.json();
+          setServerStats(statsData);
+        }
+        
+        if (convsRes.ok) {
+          const convsData = await convsRes.json();
+          setConversations(convsData);
+        }
+      } catch (error) {
+        console.error("Errore connessione server backend:", error);
+      } finally {
+        setLoadingStats(false);
+      }
+    }
+
+    fetchDashboardData();
+  }, []);
+
   const stats = [
-    { label: 'Conversazioni Attive', value: '24', icon: MessageSquare, color: 'text-blue-500', bg: 'bg-blue-50' },
-    { label: 'Utenti Supportati', value: '1,280', icon: Users, color: 'text-cyan-500', bg: 'bg-cyan-50' },
-    { label: 'Tempo Medio Risp.', value: '< 2 min', icon: Activity, color: 'text-emerald-500', bg: 'bg-emerald-50' },
-    { label: 'Soddisfazione', value: '98%', icon: Zap, color: 'text-amber-500', bg: 'bg-amber-50' }
+    { label: 'Conversazioni Attive', value: serverStats.activeConversations, icon: MessageSquare, color: 'text-blue-500', bg: 'bg-blue-50' },
+    { label: 'Utenti Supportati', value: serverStats.supportedUsers, icon: Users, color: 'text-cyan-500', bg: 'bg-cyan-50' },
+    { label: 'Tempo Medio Risp.', value: serverStats.responseTime, icon: Activity, color: 'text-emerald-500', bg: 'bg-emerald-50' },
+    { label: 'Soddisfazione', value: serverStats.satisfaction, icon: Zap, color: 'text-amber-500', bg: 'bg-amber-50' }
   ];
 
   return (
@@ -132,16 +177,41 @@ export default function Dashboard() {
             <div className="p-6 border-b border-slate-200 flex justify-between items-center">
               <h2 className="text-lg font-bold text-slate-900">Attività Recenti</h2>
             </div>
-            <div className="p-6 flex flex-col items-center justify-center text-center py-16">
-               <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
-                 <Activity className="w-8 h-8 text-slate-400" />
-               </div>
-               <h3 className="text-slate-900 font-medium mb-2">Nessuna conversazione ancora.</h3>
-               <p className="text-slate-500 mb-6 max-w-sm">Quando i tuoi utenti ti scriveranno dal widget Inizia Gratis, le richieste appariranno qui tramite Chatwoot.</p>
-               <button onClick={openChatwoot} className="text-blue-600 font-medium hover:text-blue-700 transition-colors">
-                 Apri Live Chat
-               </button>
-            </div>
+            {loadingStats ? (
+              <div className="p-12 flex justify-center text-slate-400">
+                <Activity className="w-8 h-8 animate-pulse" />
+              </div>
+            ) : conversations.length > 0 ? (
+              <div className="divide-y divide-slate-100">
+                {conversations.map((conv, i) => (
+                  <div key={conv.id || i} className="p-6 flex items-center justify-between hover:bg-slate-50 transition-colors">
+                    <div className="flex gap-4 items-center">
+                      <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center">
+                        <UserIcon className="w-5 h-5 text-slate-500" />
+                      </div>
+                      <div>
+                        <div className="font-semibold text-slate-900">{conv.userName}</div>
+                        <div className="text-sm text-slate-500 mt-1 max-w-sm truncate">{conv.lastMessage}</div>
+                      </div>
+                    </div>
+                    <div>
+                      <span className="px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-medium">Aperta</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="p-6 flex flex-col items-center justify-center text-center py-16">
+                 <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
+                   <Activity className="w-8 h-8 text-slate-400" />
+                 </div>
+                 <h3 className="text-slate-900 font-medium mb-2">Nessuna conversazione ancora.</h3>
+                 <p className="text-slate-500 mb-6 max-w-sm">Quando i tuoi utenti ti scriveranno dal widget Inizia Gratis, le richieste appariranno qui tramite Chatwoot.</p>
+                 <button onClick={openChatwoot} className="text-blue-600 font-medium hover:text-blue-700 transition-colors">
+                   Apri Live Chat
+                 </button>
+              </div>
+            )}
           </motion.div>
         </div>
       </main>
