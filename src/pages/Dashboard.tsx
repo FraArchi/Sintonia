@@ -1,17 +1,16 @@
 import { motion } from 'framer-motion';
 import { useAuth } from '../lib/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   BarChart3, 
   MessageSquare, 
-  Settings, 
   LogOut, 
   Zap,
   Users,
-  Activity,
-  User as UserIcon
+  Activity
 } from 'lucide-react';
+import ConversationsViewer from '../components/dashboard/ConversationsViewer';
 
 declare global {
   interface Window {
@@ -41,55 +40,76 @@ export default function Dashboard() {
     }
   };
 
+  const [activeTab, setActiveTab] = useState<'overview' | 'conversations'>('overview');
+  
   const [serverStats, setServerStats] = useState({
     activeConversations: '-',
     supportedUsers: '-',
     responseTime: '-',
-    satisfaction: '-'
+    satisfaction: '-',
+    aiMessagesHandled: '-',
+    hoursSaved: '-'
   });
-  
-  const [conversations, setConversations] = useState<Array<{
-    id: number;
-    userName: string;
-    lastMessage: string;
-    status: string;
-    createdAt: number;
-  }>>([]);
-  const [loadingStats, setLoadingStats] = useState(true);
 
   useEffect(() => {
-    async function fetchDashboardData() {
+    async function fetchStats() {
       try {
-        const [statsRes, convsRes] = await Promise.all([
-          fetch('http://localhost:3000/api/stats'),
-          fetch('http://localhost:3000/api/conversations')
-        ]);
-        
-        if (statsRes.ok) {
-          const statsData = await statsRes.json();
-          setServerStats(statsData);
-        }
-        
-        if (convsRes.ok) {
-          const convsData = await convsRes.json();
-          setConversations(convsData);
+        const res = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/stats`);
+        if (res.ok) {
+          const data = await res.json();
+          setServerStats(data);
         }
       } catch (error) {
-        console.error("Errore connessione server backend:", error);
-      } finally {
-        setLoadingStats(false);
+        console.error("Errore fetch stats:", error);
       }
     }
-
-    fetchDashboardData();
+    fetchStats();
   }, []);
 
   const stats = [
     { label: 'Conversazioni Attive', value: serverStats.activeConversations, icon: MessageSquare, color: 'text-blue-500', bg: 'bg-blue-50' },
-    { label: 'Utenti Supportati', value: serverStats.supportedUsers, icon: Users, color: 'text-cyan-500', bg: 'bg-cyan-50' },
-    { label: 'Tempo Medio Risp.', value: serverStats.responseTime, icon: Activity, color: 'text-emerald-500', bg: 'bg-emerald-50' },
-    { label: 'Soddisfazione', value: serverStats.satisfaction, icon: Zap, color: 'text-amber-500', bg: 'bg-amber-50' }
+    { label: 'Msgs Gestiti (AI)', value: serverStats.aiMessagesHandled, icon: Zap, color: 'text-cyan-500', bg: 'bg-cyan-50' },
+    { label: 'Ore Risparmiate', value: serverStats.hoursSaved, icon: Activity, color: 'text-emerald-500', bg: 'bg-emerald-50' },
+    { label: 'Soddisfazione', value: serverStats.satisfaction, icon: Users, color: 'text-amber-500', bg: 'bg-amber-50' }
   ];
+
+  const renderOverview = () => (
+    <div className="p-8">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
+      >
+        {stats.map((stat, i) => (
+          <div key={i} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+            <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${stat.bg}`}>
+              <stat.icon className={`w-6 h-6 ${stat.color}`} />
+            </div>
+            <div className="text-sm font-medium text-slate-500 mb-1">{stat.label}</div>
+            <div className="text-2xl font-bold text-slate-900">{stat.value}</div>
+          </div>
+        ))}
+      </motion.div>
+
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1 }}
+        className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden"
+      >
+        <div className="p-6 border-b border-slate-200 flex justify-between items-center bg-gradient-to-r from-blue-50 to-transparent">
+          <div>
+            <h2 className="text-lg font-bold text-slate-900">Sintonia AI in Azione</h2>
+            <p className="text-sm text-slate-500">Il tuo assistente sta gestendo i volumi per te.</p>
+          </div>
+          <Zap className="w-6 h-6 text-blue-500" />
+        </div>
+        <div className="p-6 text-center text-slate-600">
+          <p>L'Intelligenza Artificiale risponde immediatamente alle domande frequenti, riducendo il tempo di attesa a 0 secondi.</p>
+        </div>
+      </motion.div>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-slate-50 flex">
@@ -103,22 +123,27 @@ export default function Dashboard() {
         </div>
 
         <nav className="flex-1 px-4 py-6 space-y-2">
-          <a href="#" className="flex items-center gap-3 px-4 py-3 bg-blue-50 text-blue-600 rounded-xl font-medium transition-colors">
+          <button 
+            onClick={() => setActiveTab('overview')}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${activeTab === 'overview' ? 'bg-blue-50 text-blue-600' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}
+          >
             <BarChart3 className="w-5 h-5" />
             Panoramica
-          </a>
-          <a 
-            href="#" 
-            onClick={openChatwoot}
-            className="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl font-medium transition-colors"
+          </button>
+          <button 
+            onClick={() => setActiveTab('conversations')}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${activeTab === 'conversations' ? 'bg-blue-50 text-blue-600' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'}`}
           >
             <MessageSquare className="w-5 h-5" />
+            Log Intelligenza Artificiale
+          </button>
+          <button 
+            onClick={openChatwoot}
+            className="w-full flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl font-medium transition-colors"
+          >
+            <Zap className="w-5 h-5" />
             Apri Inbox Supporto
-          </a>
-          <a href="#" className="flex items-center gap-3 px-4 py-3 text-slate-600 hover:bg-slate-50 hover:text-slate-900 rounded-xl font-medium transition-colors">
-            <Settings className="w-5 h-5" />
-            Impostazioni
-          </a>
+          </button>
         </nav>
 
         <div className="p-4 border-t border-slate-200">
@@ -139,80 +164,27 @@ export default function Dashboard() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto">
-        <header className="bg-white border-b border-slate-200 px-8 py-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-slate-900">Panoramica</h1>
+      <main className="flex-1 overflow-y-auto flex flex-col">
+        <header className="bg-white border-b border-slate-200 px-8 py-6 flex items-center justify-between shrink-0">
+          <h1 className="text-2xl font-bold text-slate-900">
+            {activeTab === 'overview' ? 'Panoramica Sintonia AI' : 'Log Conversazioni AI'}
+          </h1>
           
           <div className="flex items-center gap-4">
              <button onClick={openChatwoot} className="px-4 py-2 bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-medium rounded-full shadow-md hover:shadow-lg transition-all flex items-center gap-2">
                <MessageSquare className="w-4 h-4" />
-               Vedi Messaggi
+               Rispondi Manualmente
              </button>
           </div>
         </header>
 
-        <div className="p-8">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
-          >
-            {stats.map((stat, i) => (
-              <div key={i} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${stat.bg}`}>
-                  <stat.icon className={`w-6 h-6 ${stat.color}`} />
-                </div>
-                <div className="text-sm font-medium text-slate-500 mb-1">{stat.label}</div>
-                <div className="text-2xl font-bold text-slate-900">{stat.value}</div>
+        <div className="flex-1 overflow-hidden relative">
+           {activeTab === 'overview' && renderOverview()}
+           {activeTab === 'conversations' && (
+              <div className="w-full h-full p-6 bg-slate-100">
+                <ConversationsViewer />
               </div>
-            ))}
-          </motion.div>
-
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden"
-          >
-            <div className="p-6 border-b border-slate-200 flex justify-between items-center">
-              <h2 className="text-lg font-bold text-slate-900">Attività Recenti</h2>
-            </div>
-            {loadingStats ? (
-              <div className="p-12 flex justify-center text-slate-400">
-                <Activity className="w-8 h-8 animate-pulse" />
-              </div>
-            ) : conversations.length > 0 ? (
-              <div className="divide-y divide-slate-100">
-                {conversations.map((conv, i) => (
-                  <div key={conv.id || i} className="p-6 flex items-center justify-between hover:bg-slate-50 transition-colors">
-                    <div className="flex gap-4 items-center">
-                      <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center">
-                        <UserIcon className="w-5 h-5 text-slate-500" />
-                      </div>
-                      <div>
-                        <div className="font-semibold text-slate-900">{conv.userName}</div>
-                        <div className="text-sm text-slate-500 mt-1 max-w-sm truncate">{conv.lastMessage}</div>
-                      </div>
-                    </div>
-                    <div>
-                      <span className="px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-medium">Aperta</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="p-6 flex flex-col items-center justify-center text-center py-16">
-                 <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
-                   <Activity className="w-8 h-8 text-slate-400" />
-                 </div>
-                 <h3 className="text-slate-900 font-medium mb-2">Nessuna conversazione ancora.</h3>
-                 <p className="text-slate-500 mb-6 max-w-sm">Quando i tuoi utenti ti scriveranno dal widget Inizia Gratis, le richieste appariranno qui tramite Chatwoot.</p>
-                 <button onClick={openChatwoot} className="text-blue-600 font-medium hover:text-blue-700 transition-colors">
-                   Apri Live Chat
-                 </button>
-              </div>
-            )}
-          </motion.div>
+           )}
         </div>
       </main>
     </div>

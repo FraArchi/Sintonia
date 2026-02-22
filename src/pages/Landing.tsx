@@ -9,7 +9,6 @@ import Pricing from '../components/Pricing.tsx'
 import SocialProof from '../components/SocialProof.tsx'
 import FinalCTA from '../components/FinalCTA.tsx'
 import Footer from '../components/Footer.tsx'
-import ChatWidget from '../components/ChatWidget.tsx'
 
 export default function Landing() {
   return (
@@ -27,10 +26,6 @@ export default function Landing() {
         <FinalCTA />
       </main>
       <Footer />
-      <ChatWidget
-        websiteToken="qGPUwRXk8rjsSGCVUuKR69ot"
-        baseUrl="https://app.sintonia.cloud"
-      />
     </div>
   )
 }
