@@ -1,9 +1,7 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { type User, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut as firebaseSignOut } from "firebase/auth";
-import { app } from "./firebase";
-import { getAuth } from "firebase/auth";
+import { auth } from "./firebase";
 
-const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
 interface AuthContextType {
@@ -24,9 +22,14 @@ export const useAuth = () => useContext(AuthContext);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!!auth);
 
   useEffect(() => {
+    if (!auth) {
+      console.warn("Firebase Auth is missing or misconfigured.");
+      return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setLoading(false);
@@ -35,18 +38,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signInWithGoogle = async () => {
+    if (!auth) {
+      throw new Error("Firebase Auth non è configurato. Controlla le variabili d'ambiente.");
+    }
+    
     try {
       await signInWithPopup(auth, googleProvider);
     } catch (error) {
       console.error("Error signing in with Google", error);
+      throw error;
     }
   };
 
   const signOut = async () => {
+    if (!auth) return;
+    
     try {
       await firebaseSignOut(auth);
     } catch (error) {
       console.error("Error signing out", error);
+      throw error;
     }
   };
 

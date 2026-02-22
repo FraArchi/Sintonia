@@ -1,4 +1,5 @@
 import { initializeApp, type FirebaseApp } from "firebase/app";
+import { getAuth, type Auth } from "firebase/auth";
 import type { Analytics } from "firebase/analytics";
 
 // Your web app's Firebase configuration
@@ -15,10 +16,13 @@ const firebaseConfig = {
 // Initialize Firebase safely
 let app: FirebaseApp | undefined;
 let analytics: Analytics | null = null;
+let auth: Auth | undefined;
 
 try {
   if (firebaseConfig.apiKey) {
     app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    
     if (typeof window !== 'undefined') {
       import("firebase/analytics").then(({ getAnalytics }) => {
         analytics = getAnalytics(app as FirebaseApp);
@@ -33,4 +37,4 @@ try {
   console.error("Firebase initialization failed:", error);
 }
 
-export { app, analytics };
+export { app, analytics, auth };

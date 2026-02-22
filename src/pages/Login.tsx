@@ -2,11 +2,9 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Zap, Mail, Lock, ArrowRight } from 'lucide-react';
 import { useAuth } from '../lib/AuthContext';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import { Link, useNavigate } from 'react-router-dom';
-import { app } from '../lib/firebase';
-
-const auth = getAuth(app);
+import { auth } from '../lib/firebase';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -21,11 +19,18 @@ export default function Login() {
     setIsLoading(true);
     setError('');
     
+    if (!auth) {
+      setError("Firebase non è configurato. Controlla le variabili d'ambiente.");
+      setIsLoading(false);
+      return;
+    }
+
     try {
       await signInWithEmailAndPassword(auth, email, password);
       navigate('/dashboard');
-    } catch (err: any) {
-      setError(err.message || 'Errore durante il login. Controlla le credenziali.');
+    } catch (err) {
+      const e = err as Error;
+      setError(e.message || 'Errore durante il login. Controlla le credenziali.');
     } finally {
       setIsLoading(false);
     }
@@ -37,8 +42,9 @@ export default function Login() {
     try {
       await signInWithGoogle();
       navigate('/dashboard');
-    } catch (err: any) {
-      setError(err.message || "Errore durante l'accesso con Google.");
+    } catch (err) {
+      const e = err as Error;
+      setError(e.message || "Errore durante l'accesso con Google.");
     } finally {
       setIsLoading(false);
     }
